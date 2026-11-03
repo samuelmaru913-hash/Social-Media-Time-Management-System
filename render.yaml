@@ -4,7 +4,7 @@ services:
     runtime: node
     rootDir: backend
     plan: free
-    buildCommand: npm ci && npm run build:railway
+    buildCommand: npm ci --include=dev && npm run build:railway
     startCommand: npm run db:migrate:prod && npm run start
     healthCheckPath: /api/v1/health
     envVars:
