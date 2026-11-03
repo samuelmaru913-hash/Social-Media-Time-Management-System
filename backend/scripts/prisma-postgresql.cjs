@@ -16,15 +16,25 @@ for (const envPath of [
     }
 }
 
+const prismaArgs = process.argv.slice(2);
+const isGenerate = prismaArgs[0] === 'generate';
+
 for (const key of ['DATABASE_URL', 'DATABASE_URL_UNPOOLED']) {
-    if (!/^postgres(?:ql)?:\/\//i.test(process.env[key] || '')) {
-        console.error(`${key} must be a PostgreSQL connection URL to use the PostgreSQL Prisma schema.`);
-        process.exit(1);
+    if (/^postgres(?:ql)?:\/\//i.test(process.env[key] || '')) {
+        continue;
     }
+
+    if (isGenerate) {
+        process.env[key] = 'postgresql://prisma:generate@localhost:5432/prisma_generate?schema=public';
+        continue;
+    }
+
+    console.error(`${key} must be a PostgreSQL connection URL to use the PostgreSQL Prisma schema.`);
+    process.exit(1);
 }
 
 const prismaCli = require.resolve('prisma');
-const result = spawnSync(process.execPath, [prismaCli, ...process.argv.slice(2)], {
+const result = spawnSync(process.execPath, [prismaCli, ...prismaArgs], {
     cwd: backendDir,
     env: process.env,
     stdio: 'inherit',
