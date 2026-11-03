@@ -5,7 +5,7 @@
   "main": "index.js",
   "scripts": {
     "dev": "npm run db:generate && tsx watch src/server.ts",
-    "build": "tsc -p tsconfig.json",
+    "build": "npm run db:generate:postgres && tsc -p tsconfig.json",
     "build:railway": "npm run build",
     "start": "node dist/server.js",
     "postinstall": "node scripts/prisma-postgresql.cjs generate --schema prisma/postgresql/schema.prisma",

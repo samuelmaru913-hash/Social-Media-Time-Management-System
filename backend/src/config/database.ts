@@ -1,4 +1,4 @@
-import { Prisma, PrismaClient } from '@prisma/client';
+import { Prisma, PrismaClient } from '@prisma/client-postgresql';
 import { logger } from '../utils/logger';
 
 type PrismaEventLogLevel = 'query' | 'error' | 'warn';
