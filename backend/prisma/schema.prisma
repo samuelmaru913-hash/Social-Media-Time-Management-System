@@ -1,0 +1,158 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  // LOCAL DEV: sqlite — no installation needed
+  // PRODUCTION: change to "postgresql" and set DATABASE_URL in your cloud env
+  provider = "sqlite"
+  url      = env("DATABASE_URL")
+}
+
+
+
+model User {
+  id           String   @id @default(cuid())
+  fullName     String
+  email        String   @unique
+  passwordHash String
+  role         String   @default("STUDENT")
+  timeZone     String   @default("UTC")
+  isActive     Boolean  @default(true)
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+
+  trackedApplications  TrackedApplication[]
+  dailyLimits          DailyLimit[]
+  usageRecords         UsageRecord[]
+  studySessions        StudySession[]
+  notificationPref     NotificationPreference?
+  refreshTokenSessions RefreshTokenSession[]
+  userPreferences      UserPreferences?
+
+  @@index([email])
+}
+
+model TrackedApplication {
+  id              String   @id @default(cuid())
+  userId          String
+  applicationName String
+  packageName     String
+  isEnabled       Boolean  @default(true)
+  iconUrl         String?
+  deviceId        String?  // source Android device ID
+  monitoringStatus String   @default("ACTIVE") // ACTIVE | PAUSED | REMOVED
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
+
+  user         User         @relation(fields: [userId], references: [id], onDelete: Cascade)
+  dailyLimits  DailyLimit[]
+  usageRecords UsageRecord[]
+
+  @@unique([userId, packageName])
+  @@index([userId])
+  @@index([packageName])
+}
+
+model DailyLimit {
+  id                    String   @id @default(cuid())
+  userId                String
+  trackedApplicationId  String
+  limitMinutes          Int      @default(180)
+  warningThreshold      Int      @default(80)
+  scheduleConfiguration String?
+  isEnabled             Boolean  @default(true)
+  createdAt             DateTime @default(now())
+  updatedAt             DateTime @updatedAt
+
+  user               User               @relation(fields: [userId], references: [id], onDelete: Cascade)
+  trackedApplication TrackedApplication @relation(fields: [trackedApplicationId], references: [id], onDelete: Cascade)
+
+  @@unique([userId, trackedApplicationId])
+  @@index([userId])
+}
+
+model UsageRecord {
+  id                   String   @id @default(cuid())
+  userId               String
+  trackedApplicationId String
+  localDate            String   // YYYY-MM-DD format
+  timeZone             String
+  usageDurationSeconds Int      @default(0)
+  sourceDeviceId       String?
+  syncId               String?  @unique
+  createdAt            DateTime @default(now())
+  updatedAt            DateTime @updatedAt
+
+  user               User               @relation(fields: [userId], references: [id], onDelete: Cascade)
+  trackedApplication TrackedApplication @relation(fields: [trackedApplicationId], references: [id], onDelete: Cascade)
+
+  @@unique([userId, trackedApplicationId, localDate, sourceDeviceId])
+  @@index([userId])
+  @@index([userId, localDate])
+  @@index([trackedApplicationId])
+}
+
+model StudySession {
+  id                     String        @id @default(cuid())
+  userId                 String
+  title                  String        @default("Study Session")
+  plannedDurationMinutes Int           @default(25)
+  actualDurationSeconds  Int           @default(0)
+  startedAt              DateTime?
+  completedAt            DateTime?
+  status                 String        @default("ACTIVE")
+  notes                  String?
+  createdAt              DateTime      @default(now())
+  updatedAt              DateTime      @updatedAt
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId])
+  @@index([userId, status])
+}
+
+model NotificationPreference {
+  id                   String   @id @default(cuid())
+  userId               String   @unique
+  limitWarningsEnabled Boolean  @default(true)
+  studyRemindersEnabled Boolean @default(true)
+  dailySummaryEnabled  Boolean  @default(true)
+  resetReminderEnabled Boolean  @default(true)
+  warningThresholds    String   @default("[80, 90, 100]")
+  createdAt            DateTime @default(now())
+  updatedAt            DateTime @updatedAt
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+}
+
+model RefreshTokenSession {
+  id        String    @id @default(cuid())
+  userId    String
+  tokenHash String    @unique
+  expiresAt DateTime
+  revokedAt DateTime?
+  createdAt DateTime  @default(now())
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId])
+  @@index([tokenHash])
+}
+
+model UserPreferences {
+  id               String   @id @default(cuid())
+  userId           String   @unique
+  dailyGoalMinutes Int      @default(120)
+  studyGoalMinutes Int      @default(120)
+  syncEnabled      Boolean  @default(true)
+  theme            String   @default("dark")
+  language         String   @default("en")
+  createdAt        DateTime @default(now())
+  updatedAt        DateTime @updatedAt
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+}

@@ -1,0 +1,67 @@
+{
+  "expo": {
+    "name": "FocusOn",
+    "slug": "focusno",
+    "version": "1.0.0",
+    "orientation": "portrait",
+    "icon": "./assets/images/icon.png",
+    "scheme": "focuson",
+    "userInterfaceStyle": "automatic",
+    "ios": {
+      "icon": "./assets/images/icon.png"
+    },
+    "android": {
+      "adaptiveIcon": {
+        "backgroundColor": "#0D1B3E",
+        "foregroundImage": "./assets/images/android-icon-foreground.png",
+        "backgroundImage": "./assets/images/android-icon-background.png",
+        "monochromeImage": "./assets/images/android-icon-monochrome.png"
+      },
+      "predictiveBackGestureEnabled": false,
+      "package": "com.dikiaa.focuson",
+      "versionCode": 1,
+      "permissions": [
+        "android.permission.QUERY_ALL_PACKAGES",
+        "android.permission.PACKAGE_USAGE_STATS",
+        "android.permission.REQUEST_INSTALL_PACKAGES"
+      ]
+    },
+    "web": {
+      "output": "server",
+      "favicon": "./assets/images/favicon.png"
+    },
+    "plugins": [
+      [
+        "expo-router",
+        {
+          "root": "./app"
+        }
+      ],
+      [
+        "expo-splash-screen",
+        {
+          "backgroundColor": "#208AEF",
+          "image": "./assets/images/splash-icon.png",
+          "imageWidth": 76
+        }
+      ],
+      "expo-secure-store",
+      "./plugins/withAppBlocker"
+    ],
+    "experiments": {
+      "typedRoutes": true
+    },
+    "extra": {
+      "router": {
+        "root": "./app",
+        "asyncRoutes": {
+          "web": true
+        }
+      },
+      "eas": {
+        "projectId": "2b54d11b-8df1-4a5c-90c5-46d8957bb694"
+      }
+    },
+    "owner": "dikiaa"
+  }
+}

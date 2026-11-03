@@ -1,0 +1,44 @@
+# Dependencies and generated output
+node_modules/
+**/node_modules/
+backend/dist/
+mobile/dist/
+mobile/web-build/
+mobile/.expo/
+.vscode/
+**/.claude/
+**/AGENTS.md
+**/.gradle/
+**/build/
+mobile/android/local.properties
+backend/tunnel_url.txt
+
+# Local environment and credentials
+.env
+.env.*
+!.env.example
+**/.env
+**/.env.*
+!**/.env.example
+*.pem
+*.key
+*.p8
+*.p12
+*.jks
+*.keystore
+credentials.json
+
+# Local databases and generated packages
+*.db
+*.db-journal
+*.sqlite
+*.sqlite3
+*.apk
+*.aab
+*.ipa
+
+# Platform and tooling state
+.DS_Store
+Thumbs.db
+*.tsbuildinfo
+*.bak
