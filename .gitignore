@@ -7,6 +7,7 @@ mobile/web-build/
 mobile/.expo/
 .vscode/
 **/.claude/
+**/.agents/
 **/AGENTS.md
 **/.gradle/
 **/build/
@@ -42,3 +43,5 @@ credentials.json
 Thumbs.db
 *.tsbuildinfo
 *.bak
+.neon
+skills-lock.json
